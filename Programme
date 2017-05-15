@@ -1,0 +1,173 @@
+#Importation des bibliotheques pygame
+import pygame
+from pygame.locals import*
+
+#Initialisation de la bibliotheque pygame
+pygame.init()
+
+#Fonction affichage boules
+#on affiche les boules sur le plateau en fonction du tableau
+def AffichageBoules(tableau):
+	fenetre.blit(fond,(0,0))
+	for j in range(7) :
+		for i in range(7):
+			if tableau [j][i]==1:
+				boule=pygame.image.load("boule.png").convert_alpha()
+				fenetre.blit(boule,(120+i*46,149+46*j))
+			elif tableau [j][i]==2:
+				boule=pygame.image.load("boulerose.png").convert_alpha()
+				fenetre.blit(boule,(120+i*46,149+46*j))
+
+
+def cliquepossible(c,l):  #definir les cliques impossible
+	if c<0 or c>6 or l<0 or c>6:  # on defini les cliques qui ne sont pas dans la grille
+		return False
+	if c<=1 and (l<=1 or l>=5):   #on defini les cliques qui sont dans la grille mais a des positions impossibles (-1)
+		return False
+	if c>=5 and (l<=1 or l>=5):
+		return False
+	else:
+		return True
+
+def Deplacementpossible((l1,c1),(l2,c2)): #on teste si le deplacement est possible: si la boule selectionnee est a cote d'une autre boule elle meme a cote d'une case vide (1 1 0)
+	if l1 != l2 and c1 != c2:
+		return False
+	if l1==l2:
+		if abs(c1-c2)==2:
+			if tableau [l1] [(c1+c2)/2]==1:
+				return True
+			else:
+				return False
+	if c1==c2:
+		if abs(l1-l2)==2:
+			if tableau [(l1+l2)/2] [c1]==1:
+				return True
+			else:
+				return False
+
+#def Deplacement(c,l):
+#	if boule_num == 2:
+#		tableau[c][l]=0
+#		boule1=(c,l)
+#		boule_num ==1
+#	if boule_num ==1:
+#		tableau[c][l]=1
+#		boule_num ==0
+#		boule2=(c,l)
+
+
+
+
+#Creation d'une fenetre pygame
+fenetre=pygame.display.set_mode((714,510))
+#Affichage d'un fond pour la fenetre
+fond=pygame.image.load("plateaudejeu.jpg").convert()
+fenetre.blit(fond,(0,0))
+
+interboule=46
+
+tableau = ([[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0], 
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0],
+			[0,0,0,0,0,0,0]])
+
+#Rafraichissement de l'ecran
+pygame.display.flip()
+
+#Boucle infinie
+continuer=1
+boule_num=0
+while continuer:
+
+#Gestion des boutons sur le cote
+	for event in pygame.event.get():
+		if event.type==QUIT: 
+			continuer=0
+
+		if event.type==MOUSEBUTTONDOWN and event.button==1 and 234<event.pos[1]<278 and 519<event.pos[0]<674:
+			tableau = [[-1,-1,1,1,1,-1,-1],#creer un tableau de dimensions 7x7 qui contiendra des entiers (les -1 representent des places vides car la grille n'est pas carree, 0 represente une case vide et 1 represente une case pleine)
+            [-1,-1,1,1,1,-1,-1],           
+			[1,1,1,1,1,1,1],
+			[1,1,1,0,1,1,1],
+			[1,1,1,1,1,1,1],
+			[-1,-1,1,1,1,-1,-1],
+			[-1,-1,1,1,1,-1,-1]]
+			
+			AffichageBoules(tableau) #Si "demarrer", les boules s'affichent sur le plateau
+			#Rafraichissement de l'ecran
+			pygame.display.flip()
+
+		elif event.type==MOUSEBUTTONDOWN and event.button==1 and 356<event.pos[1]<402 and 519<event.pos[0]<675: #Si "regles du jeu"
+			#Affichage d'un fond pour la fenetre
+			fond2=pygame.image.load("regle.png").convert()
+			fenetre.blit(fond2,(0,0))
+			#Rafraichissement de l'ecran
+			pygame.display.flip()
+		
+		elif event.type==MOUSEBUTTONDOWN and event.button==1: 
+				l=(event.pos[0]-116)//46  #notre tableau commence a 116 pixels du bord gauche de la fenetre 
+				c=(event.pos[1]-146)//46 
+				if cliquepossible(c,l):
+					print c,l #associe les coordonnees du tableau a une case 
+					#tableau[c][l]=
+					#if boule_num == 0 :
+					if tableau[c][l] == 1 :
+						tableau[c][l] =2
+						boule1=(c,l)
+						#boule_num == 1
+
+					#if boule_num == 1 :
+					if tableau [c][l] ==0:
+						tableau[c][l]= 1
+						boule2=(c,l)
+					
+						#boule_num ==2
+						
+					
+						
+								
+
+
+
+						
+					#if tableau[c][l] == 0 :
+					#	tableau[c][l] =2
+					#	boule2=(c,l)
+					#	boule_num == 2
+					#else:
+					#	boule_num = 0
+						# le deplacement est-il valide
+						
+					for l in tableau :
+						print l
+					
+				Deplacement(c,l)
+
+		AffichageBoules(tableau)
+		pygame.display.flip()
+				#print "case modifiee",tableau[c][l]
+
+				
+				
+#Fermeture de la fenetre "regle du jeu"
+			#continuer2=1
+			#while continuer2 :
+				#for event in pygame.event.get():
+					#if event.type==QUIT: 
+						#continuer2=0
+			#fenetre.blit(fond,(0,0))
+			#AffichageBoules()
+			#pygame.display.flip()
+			#if event.type==MOUSEBUTTONDOWN and event.button==1 and 0<event.pos[1]<19 and 692<event.pos[0]<714:
+				#On veut fermer la 2e fenetre en cliquant sur la croix noire en haut a droite 
+				#continuer2=0
+				#fenetre.blit(fond,(0,0))
+				#Rafraichissement de l'ecran
+				#pygame.display.flip()
+				#print "Fermeture 2e fenetre"
+
+		if event.type==MOUSEBUTTONDOWN and event.button==1 and 294<event.pos[1]<340 and 519<event.pos[0]<675: #Si "quitter"
+			continuer=0 #La fenetre se ferme
